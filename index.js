@@ -1,15 +1,18 @@
 import express from 'express';
 import './database.js';
 import cors from 'cors';
+import authRoutes from './routes/authRoutes.js';
 
 const server = express();
-
 server.use(express.json());
-server.use(cors({ origin: true, }));
+server.use(cors({ origin: true }));
 
-// eslint-disable-next-line no-undef
-const { PORT, } = process.env;
+// Rutas de autenticación
+server.use('/api/auth', authRoutes);
+
+// Puerto y escucha del servidor
+const { PORT } = process.env;
 const port = PORT || 3000;
 server.listen(port, () => {
-  console.log(`+Project has been started at port ${port}`);
+  console.log(`Server running on port ${port}`);
 });
