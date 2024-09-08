@@ -1,11 +1,14 @@
 import express from 'express';
-import './database.js';
 import cors from 'cors';
+
+import './database.js';
+import apiRouter from './src/api/router.js';
 
 const server = express();
 
 server.use(express.json());
 server.use(cors({ origin: true, }));
+server.use(apiRouter);
 
 // eslint-disable-next-line no-undef
 const { PORT, } = process.env;
