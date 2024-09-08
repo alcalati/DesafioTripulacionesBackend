@@ -1,6 +1,8 @@
 import ticketRepository from './ticket.repository.js';
 
-export async function getAll() {
+async function getAll() {
   const allTickets = await ticketRepository.getAll();
   return allTickets;
 }
+
+export default getAll;

@@ -1,5 +1,5 @@
 import Router from 'express';
-import * as ticketController from './clothes.controller.js';
+import * as ticketController from './ticket.controller.js';
 
 const router = Router();
 
