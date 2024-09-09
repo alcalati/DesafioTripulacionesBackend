@@ -7,7 +7,7 @@ const router = express.Router();
 // Validación de datos
 const validateUser = [
   check('email').isEmail().withMessage('Invalid email'),
-  check('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  check('password').isLength({ min: 6, }).withMessage('Password must be at least 6 characters'),
 ];
 
 // Registro de usuario

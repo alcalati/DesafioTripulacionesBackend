@@ -15,6 +15,6 @@ export const sendPasswordResetEmail = async (to, subject, text) => {
     subject,
     text,
   };
-
+//prueba
   return transporter.sendMail(mailOptions);
 };
