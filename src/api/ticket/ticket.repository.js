@@ -1,10 +1,12 @@
-// ticket.repository.js
-
 import ticketModel from './ticket.model.js';
 
 async function getAll() {
-  const allTickets = await ticketModel.find({}).lean();
-  return allTickets;
+  return await ticketModel.find({}).lean();
 }
 
-export default { getAll, };
+// Repositorio para filtrar tickets por tipo (public o private en la posición 0 del array)
+async function getByType(type) {
+  return await ticketModel.find({ 'type.0': type, }).lean(); // Filtramos por el primer elemento del array `type`
+}
+
+export default { getAll, getByType, };
