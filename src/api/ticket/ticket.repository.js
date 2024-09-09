@@ -1,3 +1,5 @@
+// ticket.repository.js
+
 import ticketModel from './ticket.model.js';
 
 async function getAll() {
@@ -5,4 +7,4 @@ async function getAll() {
   return allTickets;
 }
 
-export default getAll;
+export default { getAll, };

@@ -8,5 +8,5 @@ const ticketSchema = new Schema({
   type: { type: Array, required: true, },
 });
 
-const ticketModel = model('Ticket', ticketSchema, 'ticket');
+const ticketModel = model('Ticket', ticketSchema, 'tickets');
 export default ticketModel;
