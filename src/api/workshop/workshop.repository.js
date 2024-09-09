@@ -1,8 +1,12 @@
 import workshopModel from './workshop.model.js';
 
 async function getAll() {
-  const allWorkshops = await workshopModel.find({}).lean();
-  return allWorkshops;
+  return await workshopModel.find({}).lean();
 }
 
-export default { getAll, };
+async function getByDay(day) {
+  // Filtramos por el número de día (1 o 2)
+  return await workshopModel.find({ day, }).lean();
+}
+
+export default { getAll, getByDay, };

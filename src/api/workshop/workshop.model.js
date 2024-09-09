@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const workshopSchema = new mongoose.Schema({
-  date: { type: Date, required: true, },
+  day: { type: Number, required: true, }, // El campo `day` es un número (1 o 2)
   type: { type: String, required: true, },
   title: { type: String, required: true, },
   duration: { type: Number, required: true, },
