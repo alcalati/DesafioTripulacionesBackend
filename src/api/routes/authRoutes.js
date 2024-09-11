@@ -4,10 +4,11 @@ import { check, validationResult } from 'express-validator';
 
 const router = express.Router();
 
-// Validación de datos
+// Validación de datos para el registro
 const validateUser = [
   check('email').isEmail().withMessage('Invalid email'),
-  check('password').isLength({ min: 6, }).withMessage('Password must be at least 6 characters'),
+  check('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  check('username').notEmpty().withMessage('Username is required') // Agregado para validar el campo 'username'
 ];
 
 // Registro de usuario

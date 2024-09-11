@@ -1,17 +1,13 @@
 import mongoose from 'mongoose';
-import * as dotenv from 'dotenv';
 
-dotenv.config();
-
-// eslint-disable-next-line no-undef
-const { MONGO_URL, MONGO_DB_NAME, } = process.env;
-
-(async () => {
+const connectDB = async () => {
   try {
-    await mongoose.connect(MONGO_URL, { dbName: MONGO_DB_NAME, autoIndex: true });
-    console.log('Database connection successfully');
+    const conn = await mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log(`MongoDB connected: ${conn.connection.host}`);
   } catch (err) {
-    console.error('Error at database connection');
-    console.error(err);
+    console.error(`Error: ${err.message}`);
+    process.exit(1); // Terminar el proceso si no se puede conectar a la base de datos
   }
-})();
+};
+
+export default connectDB;
