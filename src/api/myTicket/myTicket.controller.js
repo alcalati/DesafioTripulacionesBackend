@@ -10,7 +10,7 @@ export async function purchaseTicket(req, res) {
     res.json(myTicket);
   } catch (error) {
     console.error('Error purchasing ticket:', error); // Log de error
-    res.status(500).json({ message: 'Error purchasing ticket', error });
+    res.status(500).json({ message: 'Error purchasing ticket', error, });
   }
 }
 
@@ -22,12 +22,12 @@ export async function validateQR(req, res) {
     const isValid = await myTicketService.validateQR(qrCodeData);
     console.log('QR Code valid:', isValid); // Log para ver si es válido o no
     if (isValid) {
-      res.json({ message: 'Ticket validated successfully' });
+      res.json({ message: 'Ticket validated successfully', });
     } else {
-      res.status(400).json({ message: 'Invalid or unrecognized QR code' });
+      res.status(400).json({ message: 'Invalid or unrecognized QR code', });
     }
   } catch (error) {
     console.error('Error validating QR code:', error); // Log de error
-    res.status(500).json({ message: 'Error validating QR code', error });
+    res.status(500).json({ message: 'Error validating QR code', error, });
   }
 }
