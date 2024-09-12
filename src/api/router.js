@@ -3,6 +3,7 @@ import Router from 'express';
 import ticketRouter from './ticket/ticket.router.js';
 import workshopRouter from './workshop/workshop.router.js';
 import usersRouter from './users/users.router.js';
+import myTicketRouter from './myTicket/myTicket.router.js';
 
 const router = Router();
 
@@ -10,5 +11,6 @@ const router = Router();
 router.use('/tickets', ticketRouter);
 router.use('/workshops', workshopRouter);
 router.use('/users', usersRouter);
+router.use('/myTicket', myTicketRouter);
 
 export default router;
