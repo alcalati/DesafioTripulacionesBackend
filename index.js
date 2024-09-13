@@ -12,7 +12,7 @@ const app = express();
 console.log('PORT:', process.env.PORT);
 console.log('MONGO_URL:', process.env.MONGO_URL);
 console.log('EMAIL_USER:', process.env.EMAIL_USER);
-console.log('JWT_SECRET:', ${process.env.JWT_SECRET_KEY}_SECRET);
+console.log('JWT_SECRET:', process.env.JWT_SECRET);
 
 app.use(express.json());
 app.use('/api/auth', authRoutes);

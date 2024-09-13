@@ -4,7 +4,7 @@ import User from '../models/User.js';
 import { sendConfirmationEmail } from '../utils/emailService.js';
 
 // Obtén las variables de entorno
-const JWT_SECRET = `${${process.env.JWT_SECRET_KEY}_SECRET}`;
+const JWT_SECRET = `${process.env.JWT_SECRET}`;
 const EMAIL_USER = `${process.env.EMAIL_USER}`;
 const EMAIL_PASS = `${process.env.EMAIL_PASS}`;
 
