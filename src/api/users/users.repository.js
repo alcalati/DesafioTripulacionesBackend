@@ -1,8 +1,17 @@
-import userModel from './users.model.js';
+// users.repository.js
+import UserModel from './users.model.js';
 
-// Repositorio para obtener un usuario por _id
-async function getUserById(id) {
-  return await userModel.findById(id).lean();
+// Función para obtener un usuario por su ID
+async function getUserById(userId) {
+  try {
+    return await UserModel.findById(userId);
+  } catch (error) {
+    throw new Error('Error retrieving user from database');
+  }
 }
 
-export default { getUserById, };
+// Exportar como default
+export default {
+  getUserById,
+  // Otras funciones pueden ir aquí
+};
