@@ -1,13 +1,29 @@
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
-  service: 'Gmail',
+  host: 'smtp.office365.com',
+  port: 587,
+  secure: false,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: 'e-learningexperience@outlook.com',
+    pass: '@Dexter2001',
   },
 });
 
+
+// Función para enviar el correo de verificación
+export const sendVerificationEmail = async (to, subject, text) => {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to,
+    subject,
+    text,
+  };
+
+  return transporter.sendMail(mailOptions);
+};
+
+// También puedes mantener la función para el restablecimiento de contraseña
 export const sendPasswordResetEmail = async (to, subject, text) => {
   const mailOptions = {
     from: process.env.EMAIL_USER,
@@ -15,6 +31,6 @@ export const sendPasswordResetEmail = async (to, subject, text) => {
     subject,
     text,
   };
-//prueba
+
   return transporter.sendMail(mailOptions);
 };

@@ -8,7 +8,7 @@ const { MONGO_URL, MONGO_DB_NAME, } = process.env;
 
 (async () => {
   try {
-    await mongoose.connect(MONGO_URL, { dbName: MONGO_DB_NAME, autoIndex: true });
+    await mongoose.connect(MONGO_URL, { dbName: MONGO_DB_NAME, autoIndex: true, });
     console.log('Database connection successfully');
   } catch (err) {
     console.error('Error at database connection');

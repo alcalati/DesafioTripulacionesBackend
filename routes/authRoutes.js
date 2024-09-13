@@ -1,8 +1,11 @@
 import express from 'express';
 import { register, login, forgotPassword } from '../controllers/authController.js';
 import { check, validationResult } from 'express-validator';
+import { verifyEmail } from '../controllers/authController.js'; // Importar la función de verificación
 
 const router = express.Router();
+
+router.get('/verify-email/:token', verifyEmail);
 
 // Validación de datos
 const validateUser = [
