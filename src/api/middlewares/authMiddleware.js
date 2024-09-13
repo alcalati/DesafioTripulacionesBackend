@@ -20,7 +20,7 @@ export const register = async (req, res) => {
     await newUser.save();
 
     // Generar token JWT para confirmar email
-    const emailToken = jwt.sign({ email }, process.env.JWT _SECRET, { expiresIn: '48h' });
+    const emailToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '48h' });
 
     // Generar el URL de confirmación
     const confirmationUrl = `http://localhost:3000/api/auth/confirm/${emailToken}`;
@@ -43,7 +43,7 @@ export const confirmEmail = async (req, res) => {
     const { emailToken } = req.params;
 
     // Verificar el token
-    const decoded = jwt.verify(emailToken, process.env.JWT _SECRET);
+    const decoded = jwt.verify(emailToken, process.env.JWT_SECRET);
 
     // Actualizar el estado del usuario a "confirmed: true"
     await User.updateOne({ email: decoded.email }, { confirmed: true });
