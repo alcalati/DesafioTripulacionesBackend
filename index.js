@@ -1,21 +1,25 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import authRoutes from './src/api/routes/authRoutes.js'; // Ruta corregida para authRoutes
 import dotenv from 'dotenv';
+import authRoutes from './src/api/routes/authRoutes.js';
 
-dotenv.config(); // Cargar variables de entorno
+// Cargar las variables de entorno desde el archivo .env
+dotenv.config();
 
 const app = express();
 
-// Middleware para analizar cuerpos JSON
-app.use(express.json());
+// Verificar las variables de entorno
+console.log('PORT:', process.env.PORT);
+console.log('MONGO_URL:', process.env.MONGO_URL);
+console.log('EMAIL_USER:', process.env.EMAIL_USER);
+console.log('JWT_SECRET:', ${process.env.JWT_SECRET_KEY}_SECRET);
 
-// Rutas de autenticación
+app.use(express.json());
 app.use('/api/auth', authRoutes);
 
 // Conectar a la base de datos
 mongoose.connect(process.env.MONGO_URL, {
-  dbName: process.env.MONGO_DB_NAME, // Usar el nombre de la base de datos desde .env
+  dbName: process.env.MONGO_DB_NAME,
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })

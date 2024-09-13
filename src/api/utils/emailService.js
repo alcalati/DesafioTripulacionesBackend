@@ -1,20 +1,37 @@
 import nodemailer from 'nodemailer';
+import { format } from 'url';
 
 const transporter = nodemailer.createTransport({
-  service: 'Gmail',
+  service: 'hotmail',
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: 'e-learningexperience@outlook.com',
+    pass: '@Dexter2001',
   },
 });
 
-export const sendPasswordResetEmail = async (to, subject, text) => {
+const sendConfirmationEmail = async (to, name, token) => {
+  const url = format({
+    protocol: 'https',
+    host: 'localhost:3000',
+    pathname: '/api/auth/confirm',
+    query: { token },
+  });
+
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: 'e-learningexperience@outlook.com',
     to,
-    subject,
-    text,
+    subject: 'Confirm your registration',
+    html: `<h2>Hello, ${name}!</h2>
+           <p>To complete your registration, please <a href="${url}">click here</a>.</p>`,
   };
-//prueba
-  return transporter.sendMail(mailOptions);
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully');
+  } catch (error) {
+    console.error('Error sending email:', error);
+    throw new Error('Could not send confirmation email');
+  }
 };
+
+export { sendConfirmationEmail };

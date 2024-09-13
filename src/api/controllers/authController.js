@@ -1,95 +1,139 @@
-import User from '../models/User.js';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { sendPasswordResetEmail } from '../utils/emailService.js';
-import crypto from 'crypto';
+import User from '../models/User.js';
+import { sendConfirmationEmail } from '../utils/emailService.js';
 
-// Registrar un nuevo usuario
-export const register = async (req, res) => {
-  const { username, email, password, name, lastName, company, charge, role, linkedin, allergies } = req.body;
+// Obtén las variables de entorno
+const JWT_SECRET = `${${process.env.JWT_SECRET_KEY}_SECRET}`;
+const EMAIL_USER = `${process.env.EMAIL_USER}`;
+const EMAIL_PASS = `${process.env.EMAIL_PASS}`;
 
-  console.log("Datos recibidos en el registro:", req.body);
-
+// Registro de usuario
+export const registerUser = async (req, res) => {
   try {
-    // Validación de campos obligatorios
-    if (!username || !email || !password) {
-      console.log("Campos obligatorios faltantes");
-      return res.status(400).json({ error: 'Username, email, and password are required' });
-    }
+    const { email, password, username } = req.body;
 
-    // Verificar si el email ya está registrado
+    // Verificar si el usuario ya existe
     const existingUser = await User.findOne({ email });
-    console.log("Usuario encontrado con el email:", existingUser);
-
     if (existingUser) {
-      console.log("Email ya registrado:", email);
-      return res.status(400).json({ error: 'Email is already registered' });
+      return res.status(400).send({ message: 'El usuario ya está registrado' });
     }
 
     // Hashear la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log("Contraseña hasheada:", hashedPassword);
 
-    // Crear nuevo usuario
+    // Crear el usuario con "confirmed" en false
     const user = new User({
-      username,
       email,
       password: hashedPassword,
-      name,
-      lastName, // Asegurarse de que el campo sea lastName, no last-Name
-      company,
-      charge,
-      role,
-      linkedin,
-      allergies,
+      username,
+      confirmed: false,
     });
 
-    // Guardar usuario en la base de datos
-    const savedUser = await user.save();
-    console.log("Usuario guardado:", savedUser);
+    // Generar el token de confirmación
+    const confirmationToken = jwt.sign(
+      { email: user.email },
+      JWT_SECRET,
+      { expiresIn: '15m' }
+    );
 
-    // Responder con mensaje de éxito
-    res.status(201).json({ message: 'User registered successfully', user });
+    // Establecer el token y su expiración en el usuario
+    user.confirmationToken = confirmationToken;
+    user.confirmationTokenExpires = Date.now() + 15 * 60 * 1000; // 15 minutos
+    await user.save();
 
+    // Crear URL de confirmación
+    const url = `http://localhost:3000/api/auth/confirm/${confirmationToken}`;
+
+    // Enviar email de confirmación
+    await sendConfirmationEmail(user.email, 'Confirma tu registro', `Para finalizar tu registro, haz clic en el siguiente enlace: <a href="${url}">${url}</a>`);
+
+    res.status(201).send({
+      message: 'Te hemos enviado un email para confirmar tu registro',
+      user,
+    });
   } catch (err) {
-    console.error("Error al registrar usuario:", err);
-    res.status(500).json({ error: 'Error registering user' });
+    res.status(400).send({ error: err.message });
   }
 };
 
-// Iniciar sesión de usuario
+// Confirmar email
+export const confirmEmail = async (req, res) => {
+  try {
+    const { token } = req.params;
+
+    // Verificar el token
+    const payload = jwt.verify(token, JWT_SECRET);
+
+    // Verificar si el token ha expirado
+    const user = await User.findOne({ email: payload.email });
+    if (!user || user.confirmationTokenExpires < Date.now()) {
+      return res.status(400).send('El enlace de confirmación ha expirado o el usuario no existe.');
+    }
+
+    // Actualizar el estado del usuario a "confirmed: true"
+    user.confirmed = true;
+    user.confirmationToken = undefined;
+    user.confirmationTokenExpires = undefined;
+    await user.save();
+
+    res.status(200).send('Tu correo ha sido verificado correctamente.');
+  } catch (err) {
+    res.status(400).send('Enlace roto o inválido.');
+  }
+};
+
+// Iniciar sesión
 export const login = async (req, res) => {
   const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) return res.status(400).send({ message: 'Usuario no encontrado' });
+
+  // Verificar si el usuario ha confirmado el email
+  if (!user.confirmed) {
+    return res.status(400).send({ message: 'Debes confirmar tu email para iniciar sesión' });
+  }
+
+  // Verificar la contraseña
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) return res.status(400).send({ message: 'Contraseña incorrecta' });
+
+  // Generar el token de acceso
+  const accessToken = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '15m' });
+
+  // Generar el token de refresh
+  const refreshToken = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
+
+  res.status(200).send({
+    accessToken,
+    refreshToken,
+    user,
+  });
+};
+
+// Refrescar token
+export const refreshToken = async (req, res) => {
   try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ error: 'User not found' });
+    const { refreshToken } = req.body;
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });
+    // Verificar el token de refresh
+    const payload = jwt.verify(refreshToken, JWT_SECRET);
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.status(200).json({ token });
+    // Generar un nuevo token de acceso
+    const newAccessToken = jwt.sign({ userId: payload.userId }, JWT_SECRET, { expiresIn: '15m' });
+
+    res.status(200).send({
+      accessToken: newAccessToken,
+    });
   } catch (err) {
-    console.error("Error al iniciar sesión:", err);
-    res.status(500).json({ error: 'Error logging in' });
+    res.status(400).send({ error: 'Token de refresh inválido o expirado' });
   }
 };
 
-// Recuperación de contraseña
+// Recuperación de contraseña (placeholder)
 export const forgotPassword = async (req, res) => {
-  const { email } = req.body;
-  try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ error: 'User not found' });
-
-    const token = crypto.randomBytes(20).toString('hex');
-    const resetLink = `http://localhost:3000/reset-password/${token}`;
-    
-    // Enviar email con Nodemailer
-    await sendPasswordResetEmail(user.email, 'Password Reset', `Click here to reset your password: ${resetLink}`);
-    res.status(200).json({ message: 'Password reset email sent' });
-  } catch (err) {
-    console.error("Error al enviar el correo de recuperación:", err);
-    res.status(500).json({ error: 'Error sending password reset email' });
-  }
+  // Lógica para recuperación de contraseña (ej. enviar un correo con un enlace para resetear la contraseña)
+  res.status(200).send({ message: 'Funcionalidad de recuperación de contraseña aún no implementada' });
 };
