@@ -6,5 +6,5 @@ const partnerSchema = new Schema({
   charge: { type: String, required: true, },
 });
 
-const partnerModel = model('Partner', partnerSchema, 'partner');
+const partnerModel = model('Partner', partnerSchema, 'partners');
 export default partnerModel;
