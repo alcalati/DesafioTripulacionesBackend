@@ -1,6 +1,6 @@
-import partnerModel from './partners.model.js';
+import partnersRepository from './partners.repository.js';
 
-// Servicio para obtener todos los partners
-export async function getAllPartners() {
-  return await partnerModel.find(); // Devuelve todos los partners
+export async function getAll() {
+  return await partnersRepository.getAll();
 }
+
