@@ -1,10 +1,10 @@
-import { Schema, model } from 'mongoose';
+import mongoose from 'mongoose';
 
-const partnerSchema = new Schema({
+const partnerSchema = new mongoose.Schema({
   name: { type: String, required: true,},
   description: { type: String, required: true, },
   charge: { type: String, required: true, },
 });
 
-const partnerModel = model('Partner', partnerSchema, 'partners');
+const partnerModel = mongoose.model('Partner', partnerSchema, 'partners');
 export default partnerModel;
