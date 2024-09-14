@@ -43,7 +43,7 @@ export const registerUser = async (req, res) => {
     await user.save();
 
     // Crear URL de confirmación
-    const url = `http://localhost:3000/api/auth/confirm/${confirmationToken}`;
+    const url = `https://desafiotripulacionesbackend.onrender.com/api/auth/confirm/${confirmationToken}`;
 
     // Enviar email de confirmación
     await sendConfirmationEmail(user.email, 'Confirma tu registro', `Para finalizar tu registro, haz clic en el siguiente enlace: <a href="${url}">${url}</a>`);

@@ -23,7 +23,7 @@ export const register = async (req, res) => {
     const emailToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '48h' });
 
     // Generar el URL de confirmación
-    const confirmationUrl = `http://localhost:3000/api/auth/confirm/${emailToken}`;
+    const confirmationUrl = `https://desafiotripulacionesbackend.onrender.com/api/auth/confirm/${emailToken}`;
 
     // Enviar email de confirmación
     await sendConfirmationEmail(email, 'Confirma tu registro', confirmationUrl);

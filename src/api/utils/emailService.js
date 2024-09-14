@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
 const sendConfirmationEmail = async (to, name, token) => {
   const url = format({
     protocol: 'https',
-    host: 'localhost:3000',
+    host: 'desafiotripulacionesbackend.onrender.com',
     pathname: '/api/auth/confirm',
     query: { token },
   });
