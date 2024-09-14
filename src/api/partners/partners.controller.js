@@ -1,11 +1,10 @@
 import * as partnerService from './partners.service.js';
 
-// Controlador para obtener todos los partners
-export async function getAllPartners(req, res) {
+export async function getAll(req, res) {
   try {
-    const partners = await partnerService.getAllPartners();
-    res.json(partners);
+    const allPartners = await partnerService.getAll();
+    res.json(allPartners);
   } catch (error) {
-    res.status(500).json({ message: 'Error retrieving partners', error, });
+    res.status(500).json({ message: 'Error fetching partners', error, });
   }
 }

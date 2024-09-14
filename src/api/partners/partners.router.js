@@ -3,7 +3,6 @@ import * as partnerController from './partners.controller.js';
 
 const router = Router();
 
-// Ruta para obtener todos los partners
-router.get('/all', partnerController.getAllPartners);
+router.get('/all', partnerController.getAll);
 
 export default router;
