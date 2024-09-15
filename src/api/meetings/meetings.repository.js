@@ -1,12 +1,12 @@
 import meetingModel from './meetings.model.js';
 
 // Repositorio para crear una reunión
-export async function createMeeting(partnerId, clientId, startTime, endTime) {
+export async function createMeeting(partnerId, clientId, start, end) {
   const meeting = new meetingModel({
     partner: partnerId,
     client: clientId,
-    startTime,
-    endTime,
+    start,
+    end,
     status: 'scheduled',
   });
   return await meeting.save();
@@ -20,11 +20,11 @@ export async function getMeetingsByUser(userId) {
 }
 
 // Repositorio para comprobar conflictos de horarios
-export async function checkConflicts(partnerId, clientId, startTime, endTime) {
+export async function checkConflicts(partnerId, clientId, start, end) {
   return await meetingModel.findOne({
     $or: [
-      { partner: partnerId, startTime: { $lt: endTime, }, endTime: { $gt: startTime, }, },
-      { client: clientId, startTime: { $lt: endTime, }, endTime: { $gt: startTime, }, },
+      { partner: partnerId, start: { $lt: end, }, end: { $gt: start, }, },
+      { client: clientId, start: { $lt: end, }, end: { $gt: start, }, },
     ],
   });
 }
