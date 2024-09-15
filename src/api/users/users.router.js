@@ -1,8 +1,10 @@
 import Router from 'express';
 import * as userController from './users.controller.js';
+import { protect } from '../../../middlewares/authMiddleware.js';
 
 const router = Router();
 
-router.get('/:id', userController.getUserById); // Ruta para obtener un usuario por su _id
+// Rutas protegidas
+router.get('/:id', protect, userController.getUserById);
 
 export default router;

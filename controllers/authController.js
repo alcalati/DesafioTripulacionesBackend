@@ -1,7 +1,7 @@
 import User from '../src/api/users/users.model.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { sendPasswordResetEmail, sendVerificationEmail } from '../utils/emailService.js'; // Asegúrate de que se importa aquí
+import { sendPasswordResetEmail, sendVerificationEmail } from '../utils/emailService.js';
 import crypto from 'crypto';
 
 export const register = async (req, res) => {
@@ -24,22 +24,20 @@ export const register = async (req, res) => {
     user.verificationToken = verificationToken;
     await user.save();
 
-    const verificationLink = `http://localhost:3000/auth/verify-email/${verificationToken}`;
+    const verificationLink = `https://desafiotripulacionesbackend.onrender.com/api/auth/verify-email/${verificationToken}`;
 
     // Enviar email de verificación
     await sendVerificationEmail(email, 'Email Verification', `Click here to verify your email: ${verificationLink}`);
 
     res.status(200).json({ message: 'User registered successfully, please check your email to verify your account.' });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: 'Error registering user', details: err.message });
   }
 };
 
-
 export const verifyEmail = async (req, res) => {
   const { token } = req.params;
-  console.log('Verifying email with token:', token);
+  // console.log('Verifying email with token:', token); // Eliminar o comentar esta línea
 
   try {
     const user = await User.findOne({ verificationToken: token });
@@ -51,41 +49,39 @@ export const verifyEmail = async (req, res) => {
 
     res.status(200).json({ message: 'Email verified successfully' });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: 'Error verifying email', details: err.message });
   }
 };
 
-
 export const login = async (req, res) => {
-  const { email, password, } = req.body;
+  const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ error: 'User not found', });
+    if (!user) return res.status(404).json({ error: 'User not found' });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ error: 'Invalid credentials', });
+    if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });
 
-    const token = jwt.sign({ userId: user._id, }, process.env.JWT_SECRET, { expiresIn: '1h', });
-    res.status(200).json({ token, });
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.status(200).json({ token });
   } catch (err) {
-    res.status(500).json({ error: 'Error logging in', });
+    res.status(500).json({ error: 'Error logging in' });
   }
 };
 
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
   try {
-    const user = await User.findOne({ email, });
-    if (!user) return res.status(404).json({ error: 'User not found', });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: 'User not found' });
 
     const token = crypto.randomBytes(20).toString('hex');
-    const resetLink = `http://localhost:3000/reset-password/${token}`;
+    const resetLink = `https://desafiotripulacionesbackend.onrender.com/${token}`;
 
     // Enviar email con Nodemailer
     await sendPasswordResetEmail(user.email, 'Password Reset', `Click here to reset your password: ${resetLink}`);
-    res.status(200).json({ message: 'Password reset email sent', });
+    res.status(200).json({ message: 'Password reset email sent' });
   } catch (err) {
-    res.status(500).json({ error: 'Error sending password reset email', });
+    res.status(500).json({ error: 'Error sending password reset email' });
   }
 };

@@ -1,22 +1,22 @@
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
-import './database.js';
 import apiRouter from './src/api/router.js';
+import './database.js';
 
 const server = express();
 server.use(express.json());
 server.use(cors({ origin: true }));
 
 // Rutas de autenticación
-server.use('/auth', authRoutes); // Esto debería funcionar
+server.use('/api/auth', authRoutes);
 
-// Asegúrate de que apiRouter no esté interfiriendo
-server.use(apiRouter);
+// Rutas API
+server.use('/api', apiRouter);
 
 // Puerto y escucha del servidor
 const { PORT } = process.env;
 const port = PORT || 3000;
 server.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
