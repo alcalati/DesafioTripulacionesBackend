@@ -1,10 +1,9 @@
 import * as meetingRepository from './meetings.repository.js';
 
 // Servicio para agendar una reunión
-export async function scheduleMeeting(partnerId, clientId, startTime) {
-  const start = new Date(startTime);
-  const end = new Date(startTime);
-  end.setMinutes(end.getMinutes() + 30); // Duración de 30 minutos
+export async function scheduleMeeting(partnerId, clientId, start, end) {
+  start = start.toString().slice(0, 19);
+  end = end.toString().slice(0, 19);
 
   // Verificar si hay un conflicto de horarios
   const conflict = await meetingRepository.checkConflicts(partnerId, clientId, start, end);

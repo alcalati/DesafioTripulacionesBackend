@@ -2,20 +2,20 @@ import * as meetingService from './meetings.service.js';
 
 // Controlador para agendar una reunión
 export async function scheduleMeeting(req, res) {
-  const { partnerId, clientId, startTime } = req.body;
+  const { partnerId, clientId, start,end,} = req.body;
 
-  if (!partnerId || !clientId || !startTime) {
-    return res.status(400).json({ message: 'Missing required fields' });
+  if (!partnerId || !clientId || !start|| !end) {
+    return res.status(400).json({ message: 'Missing required fields'});
   }
 
   try {
-    const meeting = await meetingService.scheduleMeeting(partnerId, clientId, startTime);
+    const meeting = await meetingService.scheduleMeeting(partnerId, clientId, start, end);
     res.json(meeting);
   } catch (error) {
     if (error.message === 'Partner or client does not exist in the user database') {
-      return res.status(404).json({ message: error.message });
+      return res.status(404).json({ message: error.message,});
     }
-    res.status(500).json({ message: 'Error scheduling meeting', error: error.message });
+    res.status(500).json({ message: 'Error scheduling meeting', error: error.message,});
   }
 }
 
