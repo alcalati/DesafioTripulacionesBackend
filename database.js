@@ -3,15 +3,14 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-// eslint-disable-next-line no-undef
-const { MONGO_URL, MONGO_DB_NAME, } = process.env;
+const { MONGO_URL, MONGO_DB_NAME } = process.env;
 
 (async () => {
   try {
-    await mongoose.connect(MONGO_URL, { dbName: MONGO_DB_NAME, autoIndex: true, });
-    console.log('Database connection successfully');
+    await mongoose.connect(MONGO_URL, { dbName: MONGO_DB_NAME, autoIndex: true });
+    console.log('Database connection successful');
   } catch (err) {
-    console.error('Error at database connection');
+    console.error('Error connecting to the database');
     console.error(err);
   }
 })();
