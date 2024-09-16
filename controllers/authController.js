@@ -80,8 +80,8 @@ export const forgotPassword = async (req, res) => {
 
     // Enviar email con Nodemailer
     await sendPasswordResetEmail(user.email, 'Password Reset', `Click here to reset your password: ${resetLink}`);
-    res.status(200).json({ message: 'Password reset email sent' });
+    res.status(200).json({ message: 'Password reset email sent'});
   } catch (err) {
-    res.status(500).json({ error: 'Error sending password reset email' });
+    res.status(500).json({ error: 'Error sending password reset email'});
   }
 };
