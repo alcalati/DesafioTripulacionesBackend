@@ -37,14 +37,14 @@ export const register = async (req, res) => {
 
 export const verifyEmail = async (req, res) => {
   const { token } = req.params;
-  // console.log('Verifying email with token:', token); // Eliminar o comentar esta línea
 
   try {
     const user = await User.findOne({ verificationToken: token });
     if (!user) return res.status(400).json({ error: 'Invalid token' });
 
-    // Limpiar el token de verificación
+    // Marcar al usuario como confirmado
     user.verificationToken = undefined;
+    user.confirmed = true;
     await user.save();
 
     res.status(200).json({ message: 'Email verified successfully' });
@@ -55,9 +55,14 @@ export const verifyEmail = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
+
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ error: 'User not found' });
+
+    if (!user.confirmed) {
+      return res.status(403).json({ error: 'Please verify your email before logging in.' });
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });
@@ -70,7 +75,7 @@ export const login = async (req, res) => {
 };
 
 export const forgotPassword = async (req, res) => {
-  const { email } = req.body;
+  const { email, } = req.body;
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ error: 'User not found' });
