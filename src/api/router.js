@@ -7,6 +7,7 @@ import myTicketRouter from './myTicket/myTicket.router.js';
 import meetingsRouter from './meetings/meetings.router.js';
 import awardsRouter from './awards/awards.router.js';
 import partnersRouter from './partners/partners.router.js';
+import accommoationRouter from './accommodation/accommodation.router.js'
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/myTicket', myTicketRouter);
 router.use('/meetings', meetingsRouter);
 router.use('/awards', awardsRouter);
 router.use('/partners', partnersRouter);
+router.use('/accommodation', accommoationRouter);
 
 export default router;
