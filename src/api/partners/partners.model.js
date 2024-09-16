@@ -6,5 +6,5 @@ const partnerSchema = new mongoose.Schema({
   charge: { type: String, required: true, },
 });
 
-const partnerModel = mongoose.model('Partner', partnerSchema, 'partners');
+const partnerModel = mongoose.model('Partner', partnerSchema, 'partner');
 export default partnerModel;
