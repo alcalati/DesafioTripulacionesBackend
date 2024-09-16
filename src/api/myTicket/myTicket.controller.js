@@ -1,5 +1,5 @@
 import * as myTicketService from './myTicket.service.js';
-import { sendQrCodeEmail } from '../utils/emailService.js'; // Importamos la función para enviar email
+import { sendQrCodeEmail } from '../../../utils/emailService.js'; // Importamos la función para enviar email
 
 export async function purchaseTicket(req, res) {
   const { userId, ticketId } = req.body; // Recibimos el id del usuario y el ticket
