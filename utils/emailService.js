@@ -10,7 +10,24 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Función para enviar el código QR por email
+export const sendQrCodeEmail = async (to, qrCode) => {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to,
+    subject: 'Your Ticket QR Code',
+    text: 'Please find your ticket QR code attached.',
+    attachments: [
+      {
+        filename: 'ticket-qr.png',
+        content: qrCode.split("base64,")[1],
+        encoding: 'base64'
+      },
+    ],
+  };
 
+  return transporter.sendMail(mailOptions);
+};
 // Función para enviar el correo de verificación
 export const sendVerificationEmail = async (to, subject, text) => {
   const mailOptions = {

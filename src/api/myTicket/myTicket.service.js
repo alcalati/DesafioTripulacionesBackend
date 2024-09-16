@@ -3,18 +3,25 @@ import QRCode from 'qrcode';
 import qrcodeReader from 'qrcode-reader';
 import Jimp from 'jimp'; // Para leer y procesar imágenes
 import { Buffer } from 'buffer';
+import User from '../users/users.model.js'; // Importamos el modelo de usuario
 
 export async function purchaseTicket(userId, ticketId) {
   console.log(`Generating QR for TicketID: ${ticketId}, UserID: ${userId}`); // Log para verificar la generación del QR
   const qrData = `TicketID: ${ticketId}, UserID: ${userId}`;
-  const qrCode = await QRCode.toDataURL(qrData, { errorCorrectionLevel: 'H', width: 300, }); // Nivel H es el más alto // Genera una imagen en formato Data URL
+  const qrCode = await QRCode.toDataURL(qrData, { errorCorrectionLevel: 'H', width: 300 }); // Genera una imagen en formato Data URL
   console.log('QR Code generated:', qrCode); // Log del QR generado
 
-  // Crear el ticket de compra en la base de datos
   const myTicket = await myTicketRepository.createTicket(userId, ticketId, qrCode);
   console.log('Ticket stored in DB:', myTicket); // Log para verificar que se guardó en la DB
   return myTicket;
 }
+
+// Nueva función para obtener el email del usuario
+export async function getUserEmail(userId) {
+  const user = await User.findById(userId);
+  return user.email;
+}
+
 
 export async function validateQR(qrCodeData) {
   console.log('Decoding QR Code'); // Log para iniciar el proceso de decodificación
