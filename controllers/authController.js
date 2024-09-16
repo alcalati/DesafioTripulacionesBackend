@@ -24,7 +24,7 @@ export const register = async (req, res) => {
     user.verificationToken = verificationToken;
     await user.save();
 
-    const verificationLink = `https://desafiotripulacionesbackend.onrender.com/api/auth/verify-email/${verificationToken}`;
+    const verificationLink = `https://desafiotripulacionesbackend.onrender.com/auth/verify-email/${verificationToken}`;
 
     // Enviar email de verificación
     await sendVerificationEmail(email, 'Email Verification', `Click here to verify your email: ${verificationLink}`);
