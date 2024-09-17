@@ -11,8 +11,9 @@ const userSchema = new mongoose.Schema({
   role: { type: String },
   linkedIn: { type: String },
   allergies: { type: String },
-  verificationToken: { type: String }, // Token de verificación
-  confirmed: { type: Boolean, default: false } // Añadir el campo confirmed
+  verificationToken: { type: String }, // Campo para almacenar el token de verificación
+  confirmed: { type: Boolean, default: false }, // Para confirmar el correo
+  qrCode: { type: String }, // Campo para almacenar el QR code generado con LinkedIn
 });
 
 // Hash de la contraseña antes de guardar
@@ -23,5 +24,5 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-const userModel = mongoose.model('User', userSchema);
-export default userModel;
+const User = mongoose.model('User', userSchema);
+export default User;

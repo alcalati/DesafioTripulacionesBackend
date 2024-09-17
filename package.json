@@ -30,6 +30,7 @@
     "mongoose": "^8.6.2",
     "nodemailer": "^6.9.15",
     "qrcode": "^1.5.4",
-    "qrcode-reader": "^1.0.4"
+    "qrcode-reader": "^1.0.4",
+    "react-qr-reader": "^3.0.0-beta-1"
   }
 }

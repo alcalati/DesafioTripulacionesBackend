@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { sendPasswordResetEmail, sendVerificationEmail } from '../utils/emailService.js';
 import crypto from 'crypto';
+import QRCode from 'qrcode';  // Importamos la librería para generar el QR
 
 export const register = async (req, res) => {
   const { username, email, password, name, lastName, company, charge, role, linkedIn, allergies } = req.body;
@@ -14,13 +15,26 @@ export const register = async (req, res) => {
       return res.status(400).json({ error: 'User with this email already exists' });
     }
 
-    const user = new User({ username, email, password, name, lastName, company, charge, role, linkedIn, allergies });
-    await user.save();
+    // Generar QR con la URL del LinkedIn
+    const qrCode = await QRCode.toDataURL(linkedIn);
 
-    // Generar un token de verificación
+    // Crear el nuevo usuario con todos los campos incluyendo el QR generado
+    const user = new User({
+      username,
+      email,
+      password,
+      name,
+      lastName,
+      company,
+      charge,
+      role,
+      linkedIn,
+      allergies,
+      qrCode,  // Almacenamos el QR en la base de datos
+    });
+
+    // Guardar el token de verificación y el usuario en la base de datos
     const verificationToken = crypto.randomBytes(20).toString('hex');
-
-    // Guardar el token en el usuario (puedes agregar un campo `verificationToken` en tu modelo User)
     user.verificationToken = verificationToken;
     await user.save();
 
@@ -34,6 +48,7 @@ export const register = async (req, res) => {
     res.status(500).json({ error: 'Error registering user', details: err.message });
   }
 };
+
 
 export const verifyEmail = async (req, res) => {
   const { token } = req.params;
