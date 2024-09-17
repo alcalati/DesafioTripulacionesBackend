@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, forgotPassword, verifyEmail } from '../controllers/authController.js';
+import { register, login, forgotPassword, verifyEmail, resetPassword } from '../controllers/authController.js';
 import { check, validationResult } from 'express-validator';
 
 const router = express.Router();
@@ -31,10 +31,9 @@ router.post('/login', (req, res) => {
 });
 
 // Recuperación de contraseña
-router.post('/forgot-password', (req, res) => {
-  console.log('Forgot password request received');
-  forgotPassword(req, res);
-});
+router.post('/forgot-password', forgotPassword);
+
+router.post('/reset-password', resetPassword);
 
 // Confirmación de email
 router.get('/verify-email/:token', (req, res) => {

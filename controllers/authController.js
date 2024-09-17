@@ -111,18 +111,51 @@ export const login = async (req, res) => {
 };
 
 export const forgotPassword = async (req, res) => {
-  const { email, } = req.body;
+  const { email } = req.body;
+
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ error: 'User not found' });
 
+    // Generar un token de restablecimiento
     const token = crypto.randomBytes(20).toString('hex');
-    const resetLink = `https://desafiotripulacionesbackend.onrender.com/${token}`;
+    user.passwordResetToken = token;
+    user.passwordResetExpires = Date.now() + 3600000; // Token válido por 1 hora
+    await user.save();
 
-    // Enviar email con Nodemailer
+    const resetLink = `https://desafio-nine-hazel.vercel.app/reset-password/${token}`;
+
+    // Enviar el email con el enlace para restablecer la contraseña
     await sendPasswordResetEmail(user.email, 'Password Reset', `Click here to reset your password: ${resetLink}`);
+
     res.status(200).json({ message: 'Password reset email sent' });
   } catch (err) {
     res.status(500).json({ error: 'Error sending password reset email' });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  try {
+    // Buscar al usuario por el token y verificar si el token aún es válido
+    const user = await User.findOne({
+      passwordResetToken: token,
+      passwordResetExpires: { $gt: Date.now() } // Verificar que el token no haya expirado
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid or expired token' });
+    }
+
+    // Actualizar la contraseña y limpiar el token
+    user.password = newPassword;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+
+    res.status(200).json({ message: 'Password reset successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Error resetting password' });
   }
 };

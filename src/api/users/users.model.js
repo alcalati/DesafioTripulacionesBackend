@@ -16,6 +16,8 @@ const userSchema = new mongoose.Schema({
   qrCode: { type: String }, // Campo para almacenar el QR code generado con LinkedIn
   failedLoginAttempts: { type: Number, default: 0 }, // Intentos fallidos
   lastFailedLogin: { type: Date }, // Último intento fallido
+  passwordResetToken: { type: String }, // Token de restablecimiento de contraseña
+  passwordResetExpires: { type: Date }, // Fecha de expiración del token
 });
 
 // Hash de la contraseña antes de guardar
