@@ -80,10 +80,31 @@ export const login = async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });
+
+    if (!isMatch) {
+      // Si la contraseña es incorrecta
+      user.failedLoginAttempts += 1;
+      user.lastFailedLogin = new Date();
+
+      if (user.failedLoginAttempts >= 3) {
+        // Enviar correo de restablecimiento de contraseña
+        const resetLink = 'https://desafiotripulacionesbackend.onrender.com/reset-password';
+        await sendPasswordResetEmail(user.email, 'Password Reset', `Too many failed attempts. Click here to reset your password: ${resetLink}`);
+
+        return res.status(403).json({ error: 'Too many failed attempts. We have sent an email to reset your password.' });
+      }
+
+      await user.save();
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Si el inicio de sesión es exitoso, reseteamos los intentos fallidos
+    user.failedLoginAttempts = 0;
+    await user.save();
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.status(200).json({ token });
+
   } catch (err) {
     res.status(500).json({ error: 'Error logging in' });
   }

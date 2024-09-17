@@ -14,6 +14,8 @@ const userSchema = new mongoose.Schema({
   verificationToken: { type: String }, // Campo para almacenar el token de verificación
   confirmed: { type: Boolean, default: false }, // Para confirmar el correo
   qrCode: { type: String }, // Campo para almacenar el QR code generado con LinkedIn
+  failedLoginAttempts: { type: Number, default: 0 }, // Intentos fallidos
+  lastFailedLogin: { type: Date }, // Último intento fallido
 });
 
 // Hash de la contraseña antes de guardar
